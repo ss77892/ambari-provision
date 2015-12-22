@@ -1,15 +1,21 @@
-Expectations:
+## Expectations:
 
 * Ambari server is installed on the first node.
 * 3-Node HBase configuration provided.
 * Hostnames in the cluster.json file need to be updated.
 
-Usage:
+## Usage:
 
 `./provision-gateway.sh ~/.ssh/my_key <ambari-server>`
 `./provision-nodes.sh ~/.ssh/my_key <ambari-server> <node> <node> ...`
 
-TODO:
+## New cluster creation:
+
+1. Install an Ambari cluster to your liking
+2. Run `curl -H "X-Requested-By: ambari" -X GET -u admin:admin "http://YOUR_AMBARI_SERVER:8080/api/v1/clusters/YOUR_CLUSTER_NAME?format=blueprint" > blueprint.json
+3. Build your own cluster.json file based on one of the examples in the other. Make sure the host_groups in your blueprint.json match what you define in the cluster.json
+
+## TODO:
 
 * Create HDFS dir for test user
 * Make sure test user can password-less SSH (authorized_keys)
