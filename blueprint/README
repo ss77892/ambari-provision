@@ -14,3 +14,4 @@ TODO:
 * Create HDFS dir for test user
 * Make sure test user can password-less SSH (authorized_keys)
 * Disable requiretty for test user in /etc/sudoers
+* install yum-utils

@@ -78,7 +78,7 @@ status "Installing system test packages"
 $SSH $h "easy_install pytest" || fail "Failed to install pytest"
 
 status 'Configuring Git'
-gitconfig = <<EOF
+read -r -d '' gitconfig <<EOF
 [credential]
   helper = cache
 EOF
