@@ -7,7 +7,11 @@
 ## Usage:
 
 `./provision-gateway.sh ~/.ssh/my_key <ambari-server>`
-`./provision-nodes.sh ~/.ssh/my_key <ambari-server> <node> <node> ...`
+`./provision-nodes.sh ~/.ssh/my_key 3-node-hbase <ambari-server> [<node> <node> ...]`
+
+The 2nd argument (e.g. "3-node-hbase") is the name of a directory which contains a blueprint.json
+and cluster.json file. The directory is expected to be co-located with the provision-nodes.sh script.
+Be sure that the specified cluster.json file contains the correct hostnames for your system.
 
 ## New cluster creation:
 

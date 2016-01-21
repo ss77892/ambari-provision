@@ -18,7 +18,7 @@ LIGHT_GRAY="\033[0;37m"
 WHITE="\033[1;37m"
 NC="\033[0m"
 
-USAGE="Usage: provision-nodes.sh <private_key> <node> [<node> ...]"
+USAGE="Usage: provision-nodes.sh <private_key> <blueprint_name> <node> [<node> ...]"
 fail() {
   echo "\n${RED}Error: ${NC}$1"
   exit 1
@@ -28,7 +28,7 @@ status() {
   echo "\n${GREEN}$@${NC}"
 }
 
-if [[ $# -lt 2 ]]; then
+if [[ $# -lt 3 ]]; then
   echo $USAGE
   fail "Expected at least two arguments"
 fi
@@ -47,8 +47,11 @@ script=$( basename "${SOURCE}" )
 pk=$1
 shift
 
-SSH="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i $pk "
-SCP="scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i $pk "
+blueprint_name=$1
+shift
+
+SSH="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i $pk -o LogLevel=quiet "
+SCP="scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i $pk -o LogLevel=quiet "
 
 first_node=""
 last_node=""
@@ -115,9 +118,9 @@ fi
 # TODO check response code in curl output
 
 status "Loading blueprint"
-curl --user admin:admin -H 'X-Requested-By: ambari' -X POST http://$first_node:8080/api/v1/blueprints/hadoop -d @${bin}/3-node-hbase/blueprint.json || fail "Failed to put blueprint."
+curl --user admin:admin -H 'X-Requested-By: ambari' -X POST http://$first_node:8080/api/v1/blueprints/hadoop -d @${bin}/${blueprint_name}/blueprint.json || fail "Failed to put blueprint."
 
 status "Loading cluster"
-curl --user admin:admin -H 'X-Requested-By: ambari' -X POST http://$first_node:8080/api/v1/clusters/hadoop -d @${bin}/3-node-hbase/cluster.json || fail "Failed to put cluster."
+curl --user admin:admin -H 'X-Requested-By: ambari' -X POST http://$first_node:8080/api/v1/clusters/hadoop -d @${bin}/${blueprint_name}/cluster.json || fail "Failed to put cluster."
 
 status "Done!"
