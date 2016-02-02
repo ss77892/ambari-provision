@@ -19,6 +19,19 @@ Be sure that the specified cluster.json file contains the correct hostnames for 
 2. Run `curl -H "X-Requested-By: ambari" -X GET -u admin:admin "http://YOUR_AMBARI_SERVER:8080/api/v1/clusters/YOUR_CLUSTER_NAME?format=blueprint" > blueprint.json
 3. Build your own cluster.json file based on one of the examples in the other. Make sure the host_groups in your blueprint.json match what you define in the cluster.json
 
+## Oh no, I goofed my installation!
+
+One downside including the cluster.json in revision control is that you (often) will not be deploying the same blueprint to
+nodes with the same hostname. Up until recently, I didn't know of a way to recover from this as Ambari would be left in this
+seriously broken state trying to install to nodes it didn't know about. Thankfully, I found there are some steps around this
+
+* `ambari-server stop`
+* `ambari-server reset` (entering "y" or "yes" where necessary)
+* `ambari-server start`
+* Re-run `provision-nodes.sh`
+
+If it wasn't entirely clear yet, this will wipe the Ambari database. Don't do this if you care about that database.
+
 ## TODO:
 
 * Create HDFS dir for test user
