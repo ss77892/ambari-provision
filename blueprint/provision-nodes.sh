@@ -66,6 +66,10 @@ for node in $@; do
   status "Provisioning $node"
   $SSH $node $ambari_repo_cmd || fail "Failed to fetch Ambari repo file"
   
+  # Install this so the subsequent yum-install can use deltarpms
+  status "Installing deltarpm"
+  $SSH $node "yum install -y deltarpm" || fail "Failed to install deltarpm"
+
   status "Installing packages"
   $SSH $node "yum install -y pssh vim git tmux gcc-c++ sysstat ambari-agent" || fail "Failed to install packages"
   

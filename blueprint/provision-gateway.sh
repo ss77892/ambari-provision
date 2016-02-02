@@ -50,6 +50,10 @@ ambari_repo_cmd="wget -O /etc/yum.repos.d/ambari.repo http://dev.hortonworks.com
 
 $SSH $h $ambari_repo_cmd || fail "Failed to fetch Ambari repo file"
 
+# Install this so the subsequent yum-install can use deltarpms
+status "Installing deltarpm"
+$SSH $h "yum install -y deltarpm" || fail "Failed to install deltarpm"
+
 status "Installing packages"
 $SSH $h "yum install -y pssh vim git tmux ambari-server gcc-c++ sysstat" || fail "Failed to install packages"
 
