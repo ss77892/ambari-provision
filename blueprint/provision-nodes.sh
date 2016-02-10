@@ -76,7 +76,7 @@ for node in $@; do
   $SSH $node "yum install -y deltarpm" || fail "Failed to install deltarpm"
 
   status "Installing packages"
-  $SSH $node "yum install -y pssh vim git tmux gcc-c++ sysstat ambari-agent" || fail "Failed to install packages"
+  $SSH $node "yum install -y pssh vim git tmux gcc-c++ sysstat ambari-agent lbzip2" || fail "Failed to install packages"
 
   $SCP "$pk" $node:~/.ssh/id_rsa || fail "Failed to copy private key"
 

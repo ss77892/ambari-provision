@@ -55,7 +55,7 @@ status "Installing deltarpm"
 $SSH $h "yum install -y deltarpm" || fail "Failed to install deltarpm"
 
 status "Installing packages"
-$SSH $h "yum install -y pssh vim git tmux ambari-server gcc-c++ sysstat" || fail "Failed to install packages"
+$SSH $h "yum install -y pssh vim git tmux ambari-server gcc-c++ sysstat lbzip2" || fail "Failed to install packages"
 
 status "Running Ambari Server setup"
 $SSH $h "ambari-server setup -s" || fail "Failed to setup ambari-server"
