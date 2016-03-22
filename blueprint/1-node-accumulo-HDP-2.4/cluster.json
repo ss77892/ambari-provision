@@ -1,0 +1,14 @@
+{
+    "blueprint": "hadoop",
+    "default_password": "password",
+    "configurations": [
+    ],
+    "host_groups": [
+        {
+            "name": "host_group_1",
+            "hosts": [
+              { "fqdn": "jelser-accumulo-1.novalocal"}
+            ]
+        }
+    ]
+}
