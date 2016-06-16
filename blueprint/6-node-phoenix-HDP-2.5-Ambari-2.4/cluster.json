@@ -1,0 +1,34 @@
+{
+    "blueprint": "hadoop",
+    "default_password": "password",
+    "configurations": [
+    ],
+    "host_groups": [
+        {
+            "name": "host_group_1",
+            "hosts": [
+              { "fqdn": "jelser-2940-perf-1.openstacklocal"}
+            ]
+        },
+        {
+            "name": "host_group_2",
+            "hosts": [
+              { "fqdn": "jelser-2940-perf-2.openstacklocal"}
+            ]
+        },
+        {
+            "name": "host_group_3",
+            "hosts": [
+              { "fqdn": "jelser-2940-perf-3.openstacklocal"}
+            ]
+        },
+        {
+            "name": "host_group_4",
+            "hosts": [
+              { "fqdn": "jelser-2940-perf-4.openstacklocal"},
+              { "fqdn": "jelser-2940-perf-5.openstacklocal"},
+              { "fqdn": "jelser-2940-perf-6.openstacklocal"}
+            ]
+        }
+    ]
+}
