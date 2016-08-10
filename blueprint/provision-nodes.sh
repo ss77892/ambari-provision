@@ -66,7 +66,9 @@ for node in $@; do
   last_node=node
   #ambari_repo_cmd="wget -O /etc/yum.repos.d/ambari.repo http://s3.amazonaws.com/dev.hortonworks.com/ambari/centos6/2.x/latest/2.1.0/ambaribn.repo"
   #ambari_repo_cmd="wget -O /etc/yum.repos.d/ambari.repo http://dev.hortonworks.com.s3.amazonaws.com/ambari/centos6/2.x/latest/2.1.3.0/ambaribn.repo"
-  ambari_repo_cmd="wget -O /etc/yum.repos.d/ambari.repo http://dev.hortonworks.com.s3.amazonaws.com/ambari/centos6/2.x/latest/2.2.1.0/ambaribn.repo"
+  #ambari_repo_cmd="wget -O /etc/yum.repos.d/ambari.repo http://dev.hortonworks.com.s3.amazonaws.com/ambari/centos6/2.x/latest/2.2.1.0/ambaribn.repo"
+  #ambari_repo_cmd="wget -O /etc/yum.repos.d/ambari.repo http://s3.amazonaws.com/dev.hortonworks.com/ambari/centos6/2.x/BUILDS/2.4.0.0-663/ambaribn.repo"
+  ambari_repo_cmd="wget -O /etc/yum.repos.d/ambari.repo http://s3.amazonaws.com/dev.hortonworks.com/ambari/centos6/2.x/BUILDS/2.4.0.0-1128/ambaribn.repo"
 
   status "Provisioning $node"
   $SSH $node $ambari_repo_cmd || fail "Failed to fetch Ambari repo file"
@@ -126,31 +128,31 @@ fi
 
 # I keep forgetting to change the hosts in cluster.json, so let's add a quick check to make sure that ping
 # can reach them. A bit tied to the schema of Ambari's blueprints -- hopefully that doesn't change.
-status 'Checking cluster.json file'
-cluster_json_hosts=$(${bin}/extract_hosts.rb ${bin}/${blueprint_name}/cluster.json)
-exit_code=$?
-
-if [[ ${exit_code} -ne 0 ]]; then
-  # I want to catch this when it fails, but, do I want it to fail? Maybe only a warning.
-  fail "Could not parse cluster.json file to determine if hosts are reachable (exit code=${exit_code})"
-else
-  while read cluster_json_line; do
-    printf "Checking ${cluster_json_line}... "
-    ping -c 2 -q "$cluster_json_line" >/dev/null 2>&1
-    if [[ $? -ne 0 ]]; then
-      echo "Failed."
-      fail "'${cluster_json_line}' is not reachable by ping, is ${bin}/${blueprint_name}/clusters.json correct?"
-    fi
-    echo "Good!"
-  done <<< "${cluster_json_hosts}"
-fi
+#status 'Checking cluster.json file'
+#cluster_json_hosts=$(${bin}/extract_hosts.rb ${bin}/${blueprint_name}/cluster.json)
+#exit_code=$?
+#
+#if [[ ${exit_code} -ne 0 ]]; then
+#  # I want to catch this when it fails, but, do I want it to fail? Maybe only a warning.
+#  fail "Could not parse cluster.json file to determine if hosts are reachable (exit code=${exit_code})"
+#else
+#  while read cluster_json_line; do
+#    printf "Checking ${cluster_json_line}... "
+#    ping -c 2 -q "$cluster_json_line" >/dev/null 2>&1
+#    if [[ $? -ne 0 ]]; then
+#      echo "Failed."
+#      fail "'${cluster_json_line}' is not reachable by ping, is ${bin}/${blueprint_name}/clusters.json correct?"
+#    fi
+#    echo "Good!"
+#  done <<< "${cluster_json_hosts}"
+#fi
 
 # TODO check response code in curl output
 
-status "Loading blueprint"
-curl --user admin:admin -H 'X-Requested-By: ambari' -X POST http://$first_node:8080/api/v1/blueprints/hadoop -d @${bin}/${blueprint_name}/blueprint.json || fail "Failed to put blueprint."
-
-status "Loading cluster"
-curl --user admin:admin -H 'X-Requested-By: ambari' -X POST http://$first_node:8080/api/v1/clusters/hadoop -d @${bin}/${blueprint_name}/cluster.json || fail "Failed to put cluster."
+#status "Loading blueprint"
+#curl --user admin:admin -H 'X-Requested-By: ambari' -X POST http://$first_node:8080/api/v1/blueprints/hadoop -d @${bin}/${blueprint_name}/blueprint.json || fail "Failed to put blueprint."
+#
+#status "Loading cluster"
+#curl --user admin:admin -H 'X-Requested-By: ambari' -X POST http://$first_node:8080/api/v1/clusters/hadoop -d @${bin}/${blueprint_name}/cluster.json || fail "Failed to put cluster."
 
 status "Done!"

@@ -1,0 +1,32 @@
+{
+    "blueprint": "hadoop",
+    "default_password": "password",
+    "configurations": [
+    ],
+    "host_groups": [
+        {
+            "name": "host_group_1",
+            "hosts": [
+              { "fqdn": "jelser-erie-krb-pqs-1.openstacklocal"}
+            ]
+        },
+        {
+            "name": "host_group_2",
+            "hosts": [
+              { "fqdn": "jelser-erie-krb-pqs-2.openstacklocal"}
+            ]
+        },
+        {
+            "name": "host_group_3",
+            "hosts": [
+              { "fqdn": "jelser-erie-krb-pqs-3.openstacklocal"}
+            ]
+        },
+        {
+            "name": "host_group_4",
+            "hosts": [
+              { "fqdn": "jelser-erie-krb-pqs-4.openstacklocal"}
+            ]
+        }
+    ]
+}
