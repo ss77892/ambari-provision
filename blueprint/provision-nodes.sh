@@ -18,7 +18,7 @@ LIGHT_GRAY="\033[0;37m"
 WHITE="\033[1;37m"
 NC="\033[0m"
 
-USAGE="Usage: provision-nodes.sh <private_key> <blueprint_name> <node> [<node> ...]"
+USAGE="Usage: provision-nodes.sh <private_key> <node> [<node> ...]"
 fail() {
   echo "\n${RED}Error: ${NC}$1"
   exit 1
@@ -32,7 +32,7 @@ status() {
   echo "\n${GREEN}$@${NC}"
 }
 
-if [[ $# -lt 3 ]]; then
+if [[ $# -lt 2 ]]; then
   echo $USAGE
   fail "Expected at least two arguments"
 fi
@@ -51,24 +51,18 @@ script=$( basename "${SOURCE}" )
 pk=$1
 shift
 
-blueprint_name=$1
-shift
-
 SSH="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i $pk -o LogLevel=quiet "
 SCP="scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i $pk -o LogLevel=quiet "
 
 first_node=""
-last_node=""
 for node in $@; do
   if [[ $first_node == "" ]]; then
     first_node=$node
   fi
-  last_node=node
-  #ambari_repo_cmd="wget -O /etc/yum.repos.d/ambari.repo http://s3.amazonaws.com/dev.hortonworks.com/ambari/centos6/2.x/latest/2.1.0/ambaribn.repo"
-  #ambari_repo_cmd="wget -O /etc/yum.repos.d/ambari.repo http://dev.hortonworks.com.s3.amazonaws.com/ambari/centos6/2.x/latest/2.1.3.0/ambaribn.repo"
-  #ambari_repo_cmd="wget -O /etc/yum.repos.d/ambari.repo http://dev.hortonworks.com.s3.amazonaws.com/ambari/centos6/2.x/latest/2.2.1.0/ambaribn.repo"
-  #ambari_repo_cmd="wget -O /etc/yum.repos.d/ambari.repo http://s3.amazonaws.com/dev.hortonworks.com/ambari/centos6/2.x/BUILDS/2.4.0.0-663/ambaribn.repo"
-  ambari_repo_cmd="wget -O /etc/yum.repos.d/ambari.repo http://s3.amazonaws.com/dev.hortonworks.com/ambari/centos6/2.x/BUILDS/2.4.0.0-1128/ambaribn.repo"
+  #ambari_repo_cmd="wget -O /etc/yum.repos.d/ambari.repo http://s3.amazonaws.com/dev.hortonworks.com/ambari/centos6/2.x/BUILDS/2.4.0.0-1203/ambaribn.repo"
+  #ambari_repo_cmd="wget -O /etc/yum.repos.d/ambari.repo http://public-repo-1.hortonworks.com/ambari/centos7/2.x/updates/2.4.1.0/ambari.repo"
+  #ambari_repo_cmd="wget -nv http://public-repo-1.hortonworks.com/ambari/centos7/2.x/updates/2.1.2.1/ambari.repo -O /etc/yum.repos.d/ambari.repo"
+  ambari_repo_cmd="wget -nv http://s3.amazonaws.com/dev.hortonworks.com/ambari/centos7/2.x/BUILDS/2.4.2.0-147/ambaribn.repo -O /etc/yum.repos.d/ambari.repo"
 
   status "Provisioning $node"
   $SSH $node $ambari_repo_cmd || fail "Failed to fetch Ambari repo file"
@@ -117,42 +111,5 @@ EOF
   $SSH $node sed "s/hostname=localhost/hostname=$first_node/" /etc/ambari-agent/conf/ambari-agent.ini -i
   $SSH $node ambari-agent start
 done
-
-if [[ $first_node == "" ]]; then
-  fail "Unexpected logic error. Should have a first node."
-fi
-
-if [[ $last_node == "" ]]; then
-  fail "Unexpected logic error. Should have a last node."
-fi
-
-# I keep forgetting to change the hosts in cluster.json, so let's add a quick check to make sure that ping
-# can reach them. A bit tied to the schema of Ambari's blueprints -- hopefully that doesn't change.
-#status 'Checking cluster.json file'
-#cluster_json_hosts=$(${bin}/extract_hosts.rb ${bin}/${blueprint_name}/cluster.json)
-#exit_code=$?
-#
-#if [[ ${exit_code} -ne 0 ]]; then
-#  # I want to catch this when it fails, but, do I want it to fail? Maybe only a warning.
-#  fail "Could not parse cluster.json file to determine if hosts are reachable (exit code=${exit_code})"
-#else
-#  while read cluster_json_line; do
-#    printf "Checking ${cluster_json_line}... "
-#    ping -c 2 -q "$cluster_json_line" >/dev/null 2>&1
-#    if [[ $? -ne 0 ]]; then
-#      echo "Failed."
-#      fail "'${cluster_json_line}' is not reachable by ping, is ${bin}/${blueprint_name}/clusters.json correct?"
-#    fi
-#    echo "Good!"
-#  done <<< "${cluster_json_hosts}"
-#fi
-
-# TODO check response code in curl output
-
-#status "Loading blueprint"
-#curl --user admin:admin -H 'X-Requested-By: ambari' -X POST http://$first_node:8080/api/v1/blueprints/hadoop -d @${bin}/${blueprint_name}/blueprint.json || fail "Failed to put blueprint."
-#
-#status "Loading cluster"
-#curl --user admin:admin -H 'X-Requested-By: ambari' -X POST http://$first_node:8080/api/v1/clusters/hadoop -d @${bin}/${blueprint_name}/cluster.json || fail "Failed to put cluster."
 
 status "Done!"
