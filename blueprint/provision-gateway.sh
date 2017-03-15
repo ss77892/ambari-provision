@@ -89,7 +89,7 @@ if [[ -f ~/.tmux.conf ]]; then
 fi
 
 status "Installing system test packages"
-$SSH $h "easy_install pytest" || fail "Failed to install pytest"
+$SSH $h "which easy_install >/dev/null 2>&1 && easy_install pytest" || fail "Failed to install pytest"
 
 status 'Configuring Git'
 read -r -d '' gitconfig <<EOF
